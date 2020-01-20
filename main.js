@@ -1,63 +1,47 @@
-const inquirer = require("inquirer");
-const Player = require("./Player")
+const readline = require('readline-sync')
+const Player = require("./Player");
+const TourDuMonde = require("./TourDuMonde");
 
-async function nbrPlayers(){
-   let nPlayers
-    await inquirer.prompt([
-        {
-            name:'NbrPlayers',
-            message: 'Entrez le nombre de joueurs',
-        },
-    ])
-    .then(answers => {
-        console.info('Nombre de joueurs : ',answers.NbrPlayers);
-         nPlayers = answers.NbrPlayers
-    })
+ function nbrPlayers(){
+   let nPlayers = readline.question('Entrez le nombre de joueurs : ')
     return nPlayers
 }
 
-async function gameMode(){
-    await inquirer.prompt([
-        {
-            type:'rawlist',
-            name: 'gamemode',
-            message: 'Choisissez le mode de jeu',
-            choices: ['Le tour du monde' , 'Le 301' , 'Le cricket']
-        }
-    ])
-    .then(answers => {
-        console.info('Votre choix est : ',answers.gamemode);
-    });
+ function gameMode(){
+    jeux = ['Le tour du monde' , 'Le 301' , 'Le cricket']
+    selectedGamemode = readline.keyInSelect(jeux, 'Choisissez le mode de jeu');
+    console.log('OK '+jeux[selectedGamemode]+' est le mode de jeu choisi')
+    return jeux[selectedGamemode]
 }
 
-async function givePlayerName(i){
-    let namePlayer
-   await  inquirer.prompt([
-        {
-            name:'namePlayer',
-            message: 'Entrez le nom du joueurs ' + (i+1) ,
-        },
-    ])
-    .then(answers => {
-        console.info('Le joueur' , answers.namePlayer + ' est ajouté') 
-        namePlayer = answers.namePlayer
-    })
+function givePlayerName(i){
+    let namePlayer = readline.question('Entrez le nom du joueurs ' + (i+1) +' ')
     return namePlayer
 }
 
 
-async function play(){
+ async function initialize(){
     let namePlayers = []
     let players = []
     let nPlayers = await nbrPlayers()
     for (let i = 0 ; i < nPlayers ; i++){
-        namePlayers += await givePlayerName(i)
-        players.push(new Player (namePlayers[i]))
+        namePlayers = await givePlayerName(i)
+        players.push(new Player (namePlayers))
     }
-    await gameMode()
+    console.log(players)
+    let jeux = await gameMode()
+    if (jeux == 'Le tour du monde' ){
+        let TDM = new TourDuMonde
+        TDM.game(players)
+    }else if ( jeux == 'Le 301'){
+        console.log('Radis')
+    }else if (jeux == 'Le cricket'){
+        console.log('hello')
+    }
     return players
 }
 
-let playersTab = play()
+let playersTab = initialize()
+
 
 module.exports = playersTab
