@@ -1,6 +1,6 @@
 const readline = require('readline-sync')
-const Player = require("./Player");
-const TourDuMonde = require("./TourDuMonde");
+const Player = require("./models/Player")
+const GameMode = require("./src/gamemode")
 
  function nbrPlayers(){
    let nPlayers = readline.question('Entrez le nombre de joueurs : ')
@@ -28,16 +28,9 @@ function givePlayerName(i){
         namePlayers = await givePlayerName(i)
         players.push(new Player (namePlayers))
     }
-    console.log(players)
-    let jeux = await gameMode()
-    if (jeux == 'Le tour du monde' ){
-        let TDM = new TourDuMonde
-        TDM.game(players)
-    }else if ( jeux == 'Le 301'){
-        console.log('Radis')
-    }else if (jeux == 'Le cricket'){
-        console.log('hello')
-    }
+    let jeux =  gameMode()
+    let Game = new GameMode
+    Game.game(players , jeux)
     return players
 }
 
